@@ -1,0 +1,23 @@
+# env
+docker load < sgs_docker_v1.6.tar
+./run_docker.sh
+
+# onnx model
+ref https://github.com/rockchip-linux/rknn-toolkit2
+
+# onnx -> float
+python3 Scripts/ConvertTool/ConvertTool.py onnx \
+  --model_file demos/onnx_yolov5/yolov5s_relu.onnx \
+  --input_shapes 1,3,640,640 \
+  --input_config demos/onnx_yolov5/config.ini \
+  --output_file demos/onnx_yolov5/yolov5s_relu.sim
+
+# float -> fixed
+python3 Scripts/calibrator/calibrator.py \
+  -i demos/onnx_yolov5/images \
+  -m demos/onnx_yolov5/yolov5s_relu.sim \
+  --input_config demos/onnx_yolov5/config.ini \
+  -n demos/onnx_yolov5/preprocess.py
+
+# fixed -> img
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim

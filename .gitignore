@@ -1,0 +1,10 @@
+
+__pycache__/
+
+*.onnx
+
+*.sim
+
+*.img
+
+*.jpg
