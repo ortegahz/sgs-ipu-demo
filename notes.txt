@@ -2,6 +2,10 @@
 docker load < sgs_docker_v1.6.tar
 ./run_docker.sh
 
+export SGS_IPU_DIR=/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3 && \
+export LD_LIBRARY_PATH=/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/libs/x86_32:/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/libs/x86_64:${LD_LIBRARY_PATH} && \
+export PYTHONPATH=/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/Scripts:${PYTHONPATH}
+
 # onnx model
 ref https://github.com/rockchip-linux/rknn-toolkit2
 
@@ -21,3 +25,12 @@ python3 Scripts/calibrator/calibrator.py \
 
 # fixed -> img
 python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim
+
+# simulation
+python3 Scripts/calibrator/simulator.py -i /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/resource/detection/coco2017_calibration_set100/000000567877.jpg -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/tensorflow/ssd_mobilenet_v1/ssd_mobilenet_v1_float.sim -c Detection -t Float -n ssd_mobilenet_v1 --draw_result ./results
+
+* /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/bin/sgs_simulator_fixed -i 'tmp_image/000000567877.jpg' -l /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/fake_label_ssd_mobilenet_v1_fixed.txt -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/tensorflow/ssd_mobilenet_v1/ssd_mobilenet_v1_fixed.sim_sgsimg.img -c Detection -d offline --skip_preprocess
+python3 Scripts/calibrator/simulator.py -i /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/resource/detection/coco2017_calibration_set100/000000567877.jpg -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/tensorflow/ssd_mobilenet_v1/ssd_mobilenet_v1_fixed.sim_sgsimg.img -c Detection -t Offline -n ssd_mobilenet_v1 --draw_result ./results
+
+* /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/bin/sgs_simulator_fixed -i 'tmp_image/bus.jpg' -l /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/fake_label_yolov5s_relu_fixed.txt -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img -c Detection -d offline --skip_preprocess
+python3 ./Scripts/calibrator/simulator.py -c Detection -t Offline -n demos/onnx_yolov5/preprocess.py -i demos/onnx_yolov5/bus.jpg -m demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img --draw_result demos/onnx_yolov5
