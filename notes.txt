@@ -63,12 +63,12 @@ PermitRootLogin yes
 # onnx -> float
 python3 Scripts/ConvertTool/ConvertTool.py caffe --model_file /work/SGS_V1_18.04/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/caffe_mobilenet_v2_shicai.prototxt --weight_file /work/SGS_V1_18.04/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/caffe_mobilenet_v2_shicai.caffemodel --input_arrays data --output_arrays prob --output_file /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_float.sim --input_config /work/SGS_V1_18.04/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/input_config.ini
 
-python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file  demos/onnx_yolov5/yolov5s_relu.onnx --input_arrays images --input_shapes 1,3,640,640 --output_arrays output,283,285 --input_config demos/onnx_yolov5/config.ini --output_file demos/onnx_yolov5/yolov5s_relu.sim
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/modified_yolov5s.onnx --input_arrays images --input_shapes 1,3,640,640 --output_arrays output,327,328 --input_config demos/onnx_yolov5/config_ipu_v0.ini --output_file demos/onnx_yolov5/yolov5s_relu.sim
 
 # float -> fixed
 python3 Scripts/calibrator/calibrator.py -i /work/SGS_V1_18.04/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/resource/classify/ilsvrc2012_calibration_set32/ -m /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_float.sim -c Classification --input_config /work/SGS_V1_18.04/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/input_config.ini -n caffe_mobilenet_v2
 
-python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/yolov5s_relu.sim --input_config demos/onnx_yolov5/config.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/yolov5s_relu.sim --input_config demos/onnx_yolov5/config_ipu_v0.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
 
 # fixed -> img
 python3 Scripts/calibrator/compiler.py -m /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_fixed.sim
@@ -76,23 +76,4 @@ python3 Scripts/calibrator/compiler.py -m /work/SGS_V1_18.04/home/manu/tmp/caffe
 python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim
 
 # simulation
-python3 Scripts/calibrator/simulator.py -i SGS_Models/resource/classify/ilsvrc2012_val_set100 -l SGS_Models/resource/classify/caffe_labels.txt -m caffe_mobilenet_v2_cmodel_float.sim -c Classification -t Float -n Scripts/calibrator/preprocess_method/caffe_mobilenet_v2.py --num_process 20
-
-python3 Scripts/calibrator/simulator.py \
--i SGS_Models/resource/classify/ilsvrc2012_val_set100 \
--l SGS_Models/resource/classify/caffe_labels.txt \
--m caffe_mobilenet_v2_fixed.sim \
--c Classification \
--t Fixed \
--n Scripts/calibrator/preprocess_method/caffe_mobilenet_v2.py \
---num_process 20
-
-python3 Scripts/calibrator/simulator.py \
--i SGS_Models/resource/classify/ILSVRC2012_test_00000002.bmp \
--m caffe_mobilenet_v2_fixed.sim_sgsimg.img \
--l SGS_Models/resource/classify/labels.txt \
--c Classification \
--t Offline \
--n Scripts/calibrator/preprocess_method/caffe_mobilenet_v2.py
-
-python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.jpg -m demos/onnx_yolov5/yolov5s_relu.sim -c Detection -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results -c Unknown
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu.sim -c Unknown -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
