@@ -73,7 +73,11 @@ python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/on
 # fixed -> img
 python3 Scripts/calibrator/compiler.py -m /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_fixed.sim
 
-python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim -c Unknown
 
 # simulation
 python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu.sim -c Unknown -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu_fixed.sim -c Unknown -t Fixed -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
