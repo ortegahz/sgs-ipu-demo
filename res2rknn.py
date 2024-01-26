@@ -13,7 +13,7 @@ def set_logging():
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path_in',
-                        default='/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/log/output/unknown_face_320_fixed.sim_sgsimg.img_students_lt_320.bmp.txt')
+                        default='/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/log/output/unknown_isf_fixed.sim_sgsimg.img_1540490031567-0.504512.bmp.txt')
     parser.add_argument('--dir_out', default='/home/manu/tmp')
     return parser.parse_args()
 

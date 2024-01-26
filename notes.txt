@@ -84,7 +84,7 @@ python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/on
 
 python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/acfree_160.sim --input_config demos/onnx_yolov5/config_ipu_acfree_x.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
 
-python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/isf.sim --input_config demos/onnx_yolov5/config_ipu_isf.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/isf.sim --input_config demos/onnx_yolov5/config_ipu_isf.ini -n demos/onnx_yolov5/preprocess_isf.py -c Unknown
 
 # fixed -> img
 python3 Scripts/calibrator/compiler.py -m /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_fixed.sim
@@ -111,6 +111,10 @@ python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_
 python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_320.bmp -m demos/onnx_yolov5/face_320_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
 
 python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_96.bmp -m demos/onnx_yolov5/acfree_96_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_160.bmp -m demos/onnx_yolov5/acfree_160_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/1540490031567-0.504512.bmp -m demos/onnx_yolov5/isf_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess_isf.py --num_process 20 --draw_result demos/onnx_yolov5/results
 
 # board
 telnet 192.168.1.99 11023
