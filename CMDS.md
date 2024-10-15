@@ -1,0 +1,214 @@
+# onnx model
+ref https://github.com/rockchip-linux/rknn-toolkit2
+
+########################################################################################################################
+# SGS_IPU_SDK_v1.2.9
+########################################################################################################################
+# env
+cd /media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/docker_v1.7/
+docker load < sgs_docker_v1.7.tar
+dos2unix run_docker.sh
+./run_docker.sh
+
+export SGS_IPU_DIR=/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9 && \
+export LD_LIBRARY_PATH=/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/libs/x86_32:/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/libs/x86_64:${LD_LIBRARY_PATH} && \
+export PYTHONPATH=/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/Scripts:${PYTHONPATH}
+
+# onnx -> float
+python3 Scripts/ConvertTool/ConvertTool.py onnx \
+  --model_file demos/onnx_yolov5/yolov5s_relu.onnx \
+  --input_shapes 1,3,640,640 \
+  --input_config demos/onnx_yolov5/config.ini \
+  --output_file demos/onnx_yolov5/yolov5s_relu.sim
+
+# float -> fixed
+python3 Scripts/calibrator/calibrator.py \
+  -i demos/onnx_yolov5/images \
+  -m demos/onnx_yolov5/yolov5s_relu.sim \
+  --input_config demos/onnx_yolov5/config.ini \
+  -n demos/onnx_yolov5/preprocess.py
+
+# fixed -> img
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim
+
+# simulation ?
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/bus.jpg -m demos/onnx_yolov5/yolov5s_relu.sim -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+# onnx -> float
+python3 Scripts/ConvertTool/ConvertTool.py onnx \
+  --model_file demos/onnx_yolov5/modified_yolov9-s-converted.onnx \
+  --input_shapes 1,3,640,640 \
+  --input_config demos/onnx_yolov5/config_yolov9_smoke.ini \
+  --output_file demos/onnx_yolov5/yolov9_smoke.sim
+
+# float -> fixed
+python3 Scripts/calibrator/calibrator.py \
+  -i demos/onnx_yolov5/images \
+  -m demos/onnx_yolov5/yolov9_smoke.sim \
+  --input_config demos/onnx_yolov5/config_yolov9_smoke.ini \
+  -n demos/onnx_yolov5/preprocess.py
+
+# fixed -> img
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov9_smoke_fixed.sim
+
+# simulation ?
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke.bmp -m demos/onnx_yolov5/yolov9_smoke_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py
+
+########################################################################################################################
+# SGS_IPU_SDK_v1.2.3
+########################################################################################################################
+# env
+cd /media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/sgs_docker_v1.6/
+docker load < sgs_docker_v1.6.tar
+./run_docker.sh
+
+export SGS_IPU_DIR=/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3 && \
+export LD_LIBRARY_PATH=/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/libs/x86_32:/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/libs/x86_64:${LD_LIBRARY_PATH} && \
+export PYTHONPATH=/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/Scripts:${PYTHONPATH}
+
+# onnx -> float
+python3 Scripts/ConvertTool/ConvertTool.py onnx \
+  --model_file demos/onnx_yolov5/yolov5s_relu.onnx \
+  --input_shapes 1,3,640,640 \
+  --input_config demos/onnx_yolov5/config.ini \
+  --output_file demos/onnx_yolov5/yolov5s_relu.sim
+
+# float -> fixed
+python3 Scripts/calibrator/calibrator.py \
+  -i demos/onnx_yolov5/images \
+  -m demos/onnx_yolov5/yolov5s_relu.sim \
+  --input_config demos/onnx_yolov5/config.ini \
+  -n demos/onnx_yolov5/preprocess.py
+
+# fixed -> img
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim
+
+# simulation
+python3 Scripts/calibrator/simulator.py -i /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/resource/detection/coco2017_calibration_set100/000000567877.jpg -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/tensorflow/ssd_mobilenet_v1/ssd_mobilenet_v1_float.sim -c Detection -t Float -n ssd_mobilenet_v1 --draw_result ./results
+
+* /work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/bin/sgs_simulator_fixed -i 'tmp_image/000000567877.jpg' -l /work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/fake_label_ssd_mobilenet_v1_fixed.txt -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/tensorflow/ssd_mobilenet_v1/ssd_mobilenet_v1_fixed.sim_sgsimg.img -c Detection -d offline --skip_preprocess
+python3 Scripts/calibrator/simulator.py -i /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/resource/detection/coco2017_calibration_set100/000000567877.jpg -m /media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/tensorflow/ssd_mobilenet_v1/ssd_mobilenet_v1_fixed.sim_sgsimg.img -c Detection -t Offline -n ssd_mobilenet_v1 --draw_result ./results
+
+* /work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/bin/sgs_simulator_fixed -i 'tmp_image/bus.jpg' -l /work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/fake_label_yolov5s_relu_fixed.txt -m /work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img -c Detection -d offline --skip_preprocess
+python3 ./Scripts/calibrator/simulator.py -c Detection -t Offline -n demos/onnx_yolov5/preprocess.py -i demos/onnx_yolov5/bus.jpg -m demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img --draw_result demos/onnx_yolov5
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/bus.jpg -m demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+# onnx -> float
+python3 Scripts/ConvertTool/ConvertTool.py onnx \
+  --model_file demos/onnx_yolov5/modified_yolov9-s-converted.onnx \
+  --input_shapes 1,3,640,640 \
+  --input_config demos/onnx_yolov5/config_yolov9_smoke.ini \
+  --output_file demos/onnx_yolov5/yolov9_smoke.sim
+
+# float -> fixed
+python3 Scripts/calibrator/calibrator.py \
+  -i demos/onnx_yolov5/images \
+  -m demos/onnx_yolov5/yolov9_smoke.sim \
+  --input_config demos/onnx_yolov5/config_yolov9_smoke.ini \
+  -n demos/onnx_yolov5/preprocess.py
+
+# fixed -> img
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov9_smoke_fixed.sim
+
+# simulation
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke.bmp -m demos/onnx_yolov5/yolov9_smoke.sim -c Unknown -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke.bmp -m demos/onnx_yolov5/yolov9_smoke_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+########################################################################################################################
+# SGS_IPU_SDK_vQ_0.1.0
+########################################################################################################################
+# env
+docker load < sgs_docker_v1.6.tar
+./run_docker.sh
+
+export SGS_IPU_DIR=/work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0 && \
+export LD_LIBRARY_PATH=/work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/libs/x86_32:/work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/libs/x86_64:${LD_LIBRARY_PATH} && \
+export PYTHONPATH=/work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/Scripts:${PYTHONPATH}
+
+docker run -it --net=host -p 8022:22 --privileged --name $MY_CONTAINER --ulimit core=-1 -v /:/work/$MY_CONTAINER sgs_docker:v1.6 env LANG=C.UTF-8 /bin/bash
+passwd root
+service ssh restart
+
+vim /etc/ssh/sshd_config
+RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+PermitRootLogin yes
+
+
+# onnx -> float
+python3 Scripts/ConvertTool/ConvertTool.py caffe --model_file /work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/caffe_mobilenet_v2_shicai.prototxt --weight_file /work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/caffe_mobilenet_v2_shicai.caffemodel --input_arrays data --output_arrays prob --output_file /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_float.sim --input_config /work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/input_config.ini
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/modified_yolov5s.onnx --input_arrays images --input_shapes 1,3,640,640 --output_arrays output,327,328 --input_config demos/onnx_yolov5/config_ipu_v0.ini --output_file demos/onnx_yolov5/yolov5s_relu.sim
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/acfree_640_slim.onnx --input_arrays images --input_shapes 1,3,640,640 --output_arrays onnx::Sigmoid_155,onnx::Sigmoid_178,onnx::Sigmoid_201,onnx::Reshape_158,onnx::Reshape_181,onnx::Reshape_204 --input_config demos/onnx_yolov5/config_ipu_acfree_x_slim.ini --output_file demos/onnx_yolov5/acfree_640_slim.sim
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/acfree.onnx --input_arrays images --input_shapes 1,3,640,640 --output_arrays onnx::Sigmoid_237,onnx::Sigmoid_260,onnx::Sigmoid_283,onnx::Reshape_240,onnx::Reshape_263,onnx::Reshape_286 --input_config demos/onnx_yolov5/config_ipu_acfree_x.ini --output_file demos/onnx_yolov5/acfree_640.sim
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/acfree_320.onnx --input_arrays images --input_shapes 1,3,320,320 --output_arrays onnx::Sigmoid_237,onnx::Sigmoid_260,onnx::Sigmoid_283,onnx::Reshape_240,onnx::Reshape_263,onnx::Reshape_286 --input_config demos/onnx_yolov5/config_ipu_acfree_320.ini --output_file demos/onnx_yolov5/acfree_320.sim
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/face_320.onnx --input_arrays images --input_shapes 1,3,320,320 --output_arrays onnx::Concat_249,onnx::Concat_257,cls_output,onnx::Concat_250,onnx::Concat_258,reg_output --input_config demos/onnx_yolov5/config_ipu_face_320.ini --output_file demos/onnx_yolov5/face_320.sim
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/acfree_160.onnx --input_arrays images --input_shapes 1,3,160,160 --output_arrays onnx::Sigmoid_237,onnx::Sigmoid_260,onnx::Sigmoid_283,onnx::Reshape_240,onnx::Reshape_263,onnx::Reshape_286 --input_config demos/onnx_yolov5/config_ipu_acfree_x.ini --output_file demos/onnx_yolov5/acfree_160.sim
+
+python3 Scripts/ConvertTool/ConvertTool.py onnx --model_file demos/onnx_yolov5/model.onnx --input_arrays data --input_shapes 1,3,112,112 --output_arrays 683 --input_config demos/onnx_yolov5/config_ipu_isf.ini --output_file demos/onnx_yolov5/isf.sim
+
+# float -> fixed
+python3 Scripts/calibrator/calibrator.py -i /work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/resource/classify/ilsvrc2012_calibration_set32/ -m /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_float.sim -c Classification --input_config /work/SGS_V1_18.04/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/SGS_Models/caffe/caffe_mobilenet_v2_shicai/input_config.ini -n caffe_mobilenet_v2
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/yolov5s_relu.sim --input_config demos/onnx_yolov5/config_ipu_v0.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/acfree_640_slim.sim --input_config demos/onnx_yolov5/config_ipu_acfree_x_slim.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/acfree_640.sim --input_config demos/onnx_yolov5/config_ipu_acfree_x.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/acfree_320.sim --input_config demos/onnx_yolov5/config_ipu_acfree_320.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/face_320.sim --input_config demos/onnx_yolov5/config_ipu_face_320.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/acfree_160.sim --input_config demos/onnx_yolov5/config_ipu_acfree_x.ini -n demos/onnx_yolov5/preprocess.py -c Unknown
+
+python3 Scripts/calibrator/calibrator.py -i demos/onnx_yolov5/images -m demos/onnx_yolov5/isf.sim --input_config demos/onnx_yolov5/config_ipu_isf.ini -n demos/onnx_yolov5/preprocess_isf.py -c Unknown
+
+# fixed -> img
+python3 Scripts/calibrator/compiler.py -m /work/SGS_V1_18.04/home/manu/tmp/caffe_mobilenet_v2_fixed.sim
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov5s_relu_fixed.sim -c Unknown
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/acfree_640_slim_fixed.sim -c Unknown
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/acfree_640_fixed.sim -c Unknown
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/acfree_320_fixed.sim -c Unknown
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/face_320_fixed.sim -c Unknown
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/acfree_160_fixed.sim -c Unknown
+
+python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/isf_fixed.sim -c Unknown
+
+# simulation
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu.sim -c Unknown -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu_fixed.sim -c Unknown -t Fixed -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/bus.bmp -m demos/onnx_yolov5/yolov5s_relu_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt.bmp -m demos/onnx_yolov5/acfree_640_slim_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt.bmp -m demos/onnx_yolov5/acfree_640_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_320.bmp -m demos/onnx_yolov5/acfree_320_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_320.bmp -m demos/onnx_yolov5/face_320_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_96.bmp -m demos/onnx_yolov5/acfree_96_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/students_lt_160.bmp -m demos/onnx_yolov5/acfree_160_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/1540490031567-0.504512.bmp -m demos/onnx_yolov5/isf_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess_isf.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+# board
+telnet 192.168.1.99 11023
