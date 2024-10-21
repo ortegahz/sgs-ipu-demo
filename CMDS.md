@@ -14,6 +14,8 @@ export SGS_IPU_DIR=/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmast
 export LD_LIBRARY_PATH=/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/libs/x86_32:/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/libs/x86_64:${LD_LIBRARY_PATH} && \
 export PYTHONPATH=/work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/Scripts:${PYTHONPATH}
 
+cd /work/SGS_V1.7_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk_1.2.9/Sigmastar_SDK_v1.2.9/SGS_IPU_SDK_v1.2.9/
+
 # onnx -> float
 python3 Scripts/ConvertTool/ConvertTool.py onnx \
   --model_file demos/onnx_yolov5/yolov5s_relu.onnx \
@@ -37,7 +39,7 @@ python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/bus.jpg -m d
 # onnx -> float
 python3 Scripts/ConvertTool/ConvertTool.py onnx \
   --model_file demos/onnx_yolov5/modified_yolov9-s-converted.onnx \
-  --input_shapes 1,3,640,640 \
+  --input_shapes 1,3,480,640 \
   --input_config demos/onnx_yolov5/config_yolov9_smoke.ini \
   --output_file demos/onnx_yolov5/yolov9_smoke.sim
 
@@ -51,8 +53,10 @@ python3 Scripts/calibrator/calibrator.py \
 # fixed -> img
 python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov9_smoke_fixed.sim
 
-# simulation ?
-python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke.bmp -m demos/onnx_yolov5/yolov9_smoke_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py
+# simulation
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke_480.bmp -m demos/onnx_yolov5/yolov9_smoke.sim -c Unknown -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke_480.bmp -m demos/onnx_yolov5/yolov9_smoke_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py
 
 ########################################################################################################################
 # SGS_IPU_SDK_v1.2.3
@@ -65,6 +69,8 @@ docker load < sgs_docker_v1.6.tar
 export SGS_IPU_DIR=/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3 && \
 export LD_LIBRARY_PATH=/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/libs/x86_32:/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/libs/x86_64:${LD_LIBRARY_PATH} && \
 export PYTHONPATH=/work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/Scripts:${PYTHONPATH}
+
+cd /work/SGS_V1_18.04/media/manu/ST2000DM005-2U91/sdks/sigmastar/Tiramisu_DLS00V010-20220107/jb_sgs_ipu_sdk/SGS_IPU_SDK_v1.2.3/SGS_IPU_SDK_v1.2.3/
 
 # onnx -> float
 python3 Scripts/ConvertTool/ConvertTool.py onnx \
@@ -114,7 +120,7 @@ python3 Scripts/calibrator/compiler.py -m demos/onnx_yolov5/yolov9_smoke_fixed.s
 # simulation
 python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke.bmp -m demos/onnx_yolov5/yolov9_smoke.sim -c Unknown -t Float -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
 
-python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke.bmp -m demos/onnx_yolov5/yolov9_smoke_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
+python3 Scripts/calibrator/simulator.py -i demos/onnx_yolov5/images/smoke_480.bmp -m demos/onnx_yolov5/yolov9_smoke_fixed.sim_sgsimg.img -c Unknown -t Offline -n demos/onnx_yolov5/preprocess.py --num_process 20 --draw_result demos/onnx_yolov5/results
 
 ########################################################################################################################
 # SGS_IPU_SDK_vQ_0.1.0
